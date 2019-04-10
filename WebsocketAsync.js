@@ -2,7 +2,7 @@ const uuidv4 = require('uuid/v4')
 
 class WebsocketAsync {
   constructor(url) {
-   
+    // promise池
     this._promisePool = {}
     this._url = url
     this._connecting = false
@@ -10,7 +10,8 @@ class WebsocketAsync {
 
   open() {
     return new Promise((resolve, reject) => {
-      if (this._connecting) return
+      if (this._connecting)reject('ws connecting...')
+
       this._connecting = true
       this._websocket = new WebSocket(this._url)
       this._websocket.onopen = (e) => {
@@ -19,6 +20,7 @@ class WebsocketAsync {
       }
       this._websocket.onerror = (e) => {
         console.log('ws error.')
+        this._connecting = false
         reject(e)
       }
       this._websocket.onmessage = (e) => {
